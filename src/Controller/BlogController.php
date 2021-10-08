@@ -5,6 +5,8 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Request;
+use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Article;
 use App\Repository\ArticleRepository;
 
@@ -26,6 +28,21 @@ class BlogController extends AbstractController
             'title' => "Bienvenue ici les amis",
             'age' => 31
         ]); 
+    }
+
+    #[Route('/blog/new', name: 'blog_create')]
+    public function create(Request $request, EntityManagerInterface $manager) {
+        $article = new Article();
+
+        $form = $this->createFormBuilder($article)
+                    ->add('title')
+                    ->add('content')
+                    ->add('image')
+                    ->getForm();
+        
+        return $this->render('blog/create.html.twig', [
+            'formArticle' => $form->createView()
+        ]);
     }
 
     #[Route('/blog/{id}', name: 'blog_show')]
